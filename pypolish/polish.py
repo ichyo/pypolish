@@ -58,16 +58,23 @@ def _restore_dictgraph_from_adj_lists(adj_lists, dictionary):
     return res
 
 
-def _polishing_dictgraph(graph, theta, iteration, sim):
-    adj_lists, dictionary = _make_adj_lists(graph)
+def _polishing_adj_lists(adj_lists, theta, iteration, sim):
     for _ in range(iteration):
         adj_lists = _update_adj_lists(adj_lists, theta, sim)
+    return adj_lists
+
+
+def _polishing_dictgraph(graph, theta, iteration, sim):
+    adj_lists, dictionary = _make_adj_lists(graph)
+    adj_lists = _polishing_adj_lists(adj_lists, theta, iteration, sim)
     graph = _restore_dictgraph_from_adj_lists(adj_lists, dictionary)
     return graph
 
 
 def graph_polishing(graph, theta, iteration, sim):
-    if isinstance(graph, dict):
+    if isinstance(graph, list):
+        return _polishing_adj_lists(graph, theta, iteration, sim)
+    elif isinstance(graph, dict):
         return _polishing_dictgraph(graph, theta, iteration, sim)
     else:
         raise TypeError('Unknown graph type')
