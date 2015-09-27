@@ -10,14 +10,17 @@ def _update_adj_lists(adj_lists, theta, sim):
     res = _empty_adj_lists(n)
     for u, Nu in enumerate(adj_lists):
         intersection = defaultdict(int)
-        for w, Nw in enumerate(Nu):
-            for v in Nw:
+        for w in Nu:
+            for v in adj_lists[w]:
                 if v >= u:
                     break
                 intersection[v] += 1
+
         for v, I in intersection.items():
-            if sim(I, len(u), len(v), n) >= theta:
+            val = sim(I, len(adj_lists[u]), len(adj_lists[v]), n)
+            if val >= theta:
                 res[v].append(u)
+                res[u].append(v)
     return res
 
 
@@ -55,11 +58,12 @@ def _restore_dictgraph_from_adj_lists(adj_lists, dictionary):
         for v in Nu:
             b = dictionary[v]
             res[a].append(b)
-    return res
+    return dict(res)
 
 
 def _polishing_adj_lists(adj_lists, theta, iteration, sim):
     for _ in range(iteration):
+        print(_)
         adj_lists = _update_adj_lists(adj_lists, theta, sim)
     return adj_lists
 
