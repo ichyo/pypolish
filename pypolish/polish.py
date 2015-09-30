@@ -63,7 +63,6 @@ def _restore_dictgraph_from_adj_lists(adj_lists, dictionary):
 
 def _polishing_adj_lists(adj_lists, theta, iteration, sim):
     for _ in range(iteration):
-        print(_)
         adj_lists = _update_adj_lists(adj_lists, theta, sim)
     return adj_lists
 
